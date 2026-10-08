@@ -44,6 +44,18 @@ builder.Services
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AngularPolicy", policy =>
+	{
+		policy
+			.WithOrigins("http://localhost:4200")
+			.AllowAnyHeader()
+			.AllowAnyMethod();
+	});
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -72,7 +84,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AngularPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
