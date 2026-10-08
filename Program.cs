@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using wcx_api.Data;
 using wcx_api.Models;
+using wcx_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services
 	.AddIdentityCore<User>()
 	.AddEntityFrameworkStores<WcxDbContext>();
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
