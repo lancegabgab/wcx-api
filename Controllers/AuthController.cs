@@ -34,5 +34,24 @@ namespace wcx_api.Controllers
 			}
 		}
 
+		[HttpPost("login")]
+		public async Task<IActionResult> Login(LoginInput input)
+		{
+			try
+			{
+				var result = await _authService.LoginAsync(input);
+
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new
+				{
+					Success = false,
+					Message = ex.Message
+				});
+			}
+		}
+
 	}
 }

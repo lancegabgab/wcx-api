@@ -6,6 +6,6 @@ namespace wcx_api.Services
 	public interface IAuthService
 	{
 		Task<Response<UserOutput>> RegisterAsync(UserInput input);
-		//Task<Response<UserOutput>> LoginAsync(LoginInput input);
+		Task<Response<LoginOutput>> LoginAsync(LoginInput input);
 	}
 }
