@@ -1,6 +1,6 @@
 ﻿namespace wcx_api.Models
 {
-	public class StaffingRequirment
+	public class StaffingRequirements
 	{
 		public int Id { get; set; }
 		public DateTime Date { get; set; }
