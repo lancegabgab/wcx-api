@@ -13,6 +13,7 @@ builder.Services.AddDbContext<WcxDbContext>(options =>
 
 builder.Services
 	.AddIdentityCore<User>()
+	.AddRoles<Role>()
 	.AddEntityFrameworkStores<WcxDbContext>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
