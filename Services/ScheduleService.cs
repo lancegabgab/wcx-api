@@ -18,11 +18,11 @@ namespace wcx_api.Services
 		}
 
 		public async Task<Response<List<ScheduleOutput>>> GetAllAsync(
-		string? agentId,
-		DateOnly? dateFrom,
-		DateOnly? dateTo,
-		TimeSpan? timeFrom,
-		TimeSpan? timeTo
+			string? agentId,
+			DateOnly? dateFrom,
+			DateOnly? dateTo,
+			TimeSpan? timeFrom,
+			TimeSpan? timeTo
 		)
 		{
 			var query = _context.Schedules
@@ -30,29 +30,19 @@ namespace wcx_api.Services
 				.AsQueryable();
 
 			if (!string.IsNullOrWhiteSpace(agentId))
-			{
 				query = query.Where(s => s.AgentId == agentId);
-			}
 
 			if (dateFrom.HasValue)
-			{
 				query = query.Where(s => s.Date >= dateFrom.Value);
-			}
 
 			if (dateTo.HasValue)
-			{
 				query = query.Where(s => s.Date <= dateTo.Value);
-			}
 
 			if (timeFrom.HasValue)
-			{
 				query = query.Where(s => s.StartTime >= timeFrom.Value);
-			}
 
 			if (timeTo.HasValue)
-			{
 				query = query.Where(s => s.EndTime <= timeTo.Value);
-			}
 
 			var schedules = await query
 				.OrderBy(s => s.Date)
@@ -61,6 +51,9 @@ namespace wcx_api.Services
 				{
 					Id = s.Id,
 					AgentId = s.AgentId,
+					FirstName = s.Agent.FirstName,
+					MiddleName = s.Agent.MiddleName,
+					LastName = s.Agent.LastName,
 					Date = s.Date,
 					StartTime = s.StartTime,
 					EndTime = s.EndTime,
@@ -85,6 +78,9 @@ namespace wcx_api.Services
 				{
 					Id = s.Id,
 					AgentId = s.AgentId,
+					FirstName = s.Agent.FirstName,
+					MiddleName = s.Agent.MiddleName,
+					LastName = s.Agent.LastName,
 					Date = s.Date,
 					StartTime = s.StartTime,
 					EndTime = s.EndTime,
