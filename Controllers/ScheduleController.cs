@@ -20,6 +20,7 @@ namespace wcx_api.Controllers
 
 		// GET: api/Schedule
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAll(
 		[FromQuery] string? agentId,
 		[FromQuery] DateOnly? dateFrom,
@@ -33,6 +34,7 @@ namespace wcx_api.Controllers
 
 		// GET: api/Schedule/1
 		[HttpGet("{id:int}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			var result = await _scheduleService.GetByIdAsync(id);
@@ -47,6 +49,7 @@ namespace wcx_api.Controllers
 
 		// POST: api/Schedule
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Create([FromBody] ScheduleInput input)
 		{
 			var result = await _scheduleService.CreateAsync(input);
@@ -65,6 +68,7 @@ namespace wcx_api.Controllers
 
 		// PUT: api/Schedule/1
 		[HttpPut("{id:int}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Update(
 			int id,
 			[FromBody] ScheduleInput input)
@@ -86,6 +90,7 @@ namespace wcx_api.Controllers
 
 		// DELETE: api/Schedule/1
 		[HttpDelete("{id:int}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			var result = await _scheduleService.DeleteAsync(id);
