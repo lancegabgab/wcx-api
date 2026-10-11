@@ -8,7 +8,7 @@ namespace wcx_api.DTOs.Inputs
 		public string AgentId { get; set; } = string.Empty;
 
 		[Required]
-		public DateTime Date { get; set; }
+		public DateOnly Date { get; set; }
 
 		[Required]
 		public TimeSpan StartTime { get; set; }
