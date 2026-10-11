@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using wcx_api.DTOs.Inputs;
 using wcx_api.DTOs.Outputs;
 using wcx_api.Services;
@@ -7,6 +8,7 @@ namespace wcx_api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize(Roles = "Admin")]
 	public class StaffingRequirementController : ControllerBase
 	{
 		private readonly StaffingRequirementService _service;
