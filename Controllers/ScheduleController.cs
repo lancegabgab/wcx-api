@@ -1,5 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using wcx_api.DTOs.Inputs;
 using wcx_api.Services;
 
@@ -92,6 +94,33 @@ namespace wcx_api.Controllers
 			{
 				return NotFound(result);
 			}
+
+			return Ok(result);
+		}
+
+		[HttpGet("my-schedules")]
+		[Authorize]
+		public async Task<IActionResult> GetMySchedules(
+		[FromQuery] DateOnly? dateFrom,
+		[FromQuery] DateOnly? dateTo,
+		[FromQuery] TimeSpan? timeFrom,
+		[FromQuery] TimeSpan? timeTo
+		)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			if (string.IsNullOrEmpty(userId))
+			{
+				return Unauthorized();
+			}
+
+			var result = await _scheduleService.GetMySchedulesAsync(
+				userId,
+				dateFrom,
+				dateTo,
+				timeFrom,
+				timeTo
+			);
 
 			return Ok(result);
 		}

@@ -296,5 +296,59 @@ namespace wcx_api.Services
 				Data = true
 			};
 		}
+
+		public async Task<Response<List<ScheduleOutput>>> GetMySchedulesAsync(
+		string userId,
+		DateOnly? dateFrom,
+		DateOnly? dateTo,
+		TimeSpan? timeFrom,
+		TimeSpan? timeTo
+		)
+		{
+			var query = _context.Schedules
+				.AsNoTracking()
+				.Where(s => s.AgentId == userId);
+
+			if (dateFrom.HasValue)
+			{
+				query = query.Where(s => s.Date >= dateFrom.Value);
+			}
+
+			if (dateTo.HasValue)
+			{
+				query = query.Where(s => s.Date <= dateTo.Value);
+			}
+
+			if (timeFrom.HasValue)
+			{
+				query = query.Where(s => s.StartTime >= timeFrom.Value);
+			}
+
+			if (timeTo.HasValue)
+			{
+				query = query.Where(s => s.EndTime <= timeTo.Value);
+			}
+
+			var schedules = await query
+				.OrderBy(s => s.Date)
+				.ThenBy(s => s.StartTime)
+				.Select(s => new ScheduleOutput
+				{
+					Id = s.Id,
+					AgentId = s.AgentId,
+					Date = s.Date,
+					StartTime = s.StartTime,
+					EndTime = s.EndTime,
+					Status = s.Status
+				})
+				.ToListAsync();
+
+			return new Response<List<ScheduleOutput>>
+			{
+				Success = true,
+				Message = "Your schedules retrieved successfully.",
+				Data = schedules
+			};
+		}
 	}
 }
