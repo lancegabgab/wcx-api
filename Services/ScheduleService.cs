@@ -136,6 +136,24 @@ namespace wcx_api.Services
 				};
 			}
 
+			var hasOverlap = await _context.Schedules
+			.AnyAsync(s =>
+				s.AgentId == input.AgentId &&
+				s.Date == input.Date &&
+				s.StartTime < input.EndTime &&
+				s.EndTime > input.StartTime
+			);
+
+			if (hasOverlap)
+			{
+				return new Response<ScheduleOutput>
+				{
+					Success = false,
+					Message = "This agent already has a schedule that overlaps with the selected time range on this date.",
+					Data = null
+				};
+			}
+
 			var schedule = new Schedule
 			{
 				AgentId = input.AgentId,
@@ -204,6 +222,25 @@ namespace wcx_api.Services
 				{
 					Success = false,
 					Message = "The specified agent does not exist.",
+					Data = null
+				};
+			}
+
+			var hasOverlap = await _context.Schedules
+			.AnyAsync(s =>
+				s.Id != id &&
+				s.AgentId == input.AgentId &&
+				s.Date == input.Date &&
+				s.StartTime < input.EndTime &&
+				s.EndTime > input.StartTime
+			);
+
+			if (hasOverlap)
+			{
+				return new Response<ScheduleOutput>
+				{
+					Success = false,
+					Message = "This agent already has a schedule that overlaps with the selected time range on this date.",
 					Data = null
 				};
 			}

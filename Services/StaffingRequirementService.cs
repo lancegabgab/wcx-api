@@ -114,7 +114,22 @@ namespace wcx_api.Services
 					Data = null
 				};
 			}
+			var hasOverlap = await _context.StaffingRequirements
+			.AnyAsync(x =>
+				x.Date == input.Date &&
+				x.StartTime < input.EndTime &&
+				x.EndTime > input.StartTime
+			);
 
+			if (hasOverlap)
+			{
+				return new Response<StaffingRequirementOutput>
+				{
+					Success = false,
+					Message = "A staffing requirement already exists for this date and overlapping time range.",
+					Data = null
+				};
+			}
 			var requirement = new StaffingRequirements
 			{
 				Date = input.Date,
@@ -167,6 +182,24 @@ namespace wcx_api.Services
 				{
 					Success = false,
 					Message = "Required agents must be greater than zero.",
+					Data = null
+				};
+			}
+
+			var hasOverlap = await _context.StaffingRequirements
+				.AnyAsync(x =>
+					x.Id != id &&
+					x.Date == input.Date &&
+					x.StartTime < input.EndTime &&
+					x.EndTime > input.StartTime
+				);
+
+			if (hasOverlap)
+			{
+				return new Response<StaffingRequirementOutput>
+				{
+					Success = false,
+					Message = "A staffing requirement already exists for this date and overlapping time range.",
 					Data = null
 				};
 			}
