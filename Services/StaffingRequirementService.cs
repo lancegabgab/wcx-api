@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using wcx_api.Data;
 using wcx_api.DTOs.Inputs;
 using wcx_api.DTOs.Outputs;
@@ -15,10 +16,40 @@ namespace wcx_api.Services
 			_context = context;
 		}
 
-		public async Task<Response<List<StaffingRequirementOutput>>> GetAllAsync()
+		public async Task<Response<List<StaffingRequirementOutput>>> GetAllAsync(
+			DateOnly? dateFrom,
+			DateOnly? dateTo,
+			TimeSpan? timeFrom,
+			TimeSpan? timeTo
+		)
 		{
-			var requirements = await _context.StaffingRequirements
+			var query = _context.StaffingRequirements
 				.AsNoTracking()
+				.AsQueryable();
+
+			if (dateFrom.HasValue)
+			{
+				query = query.Where(x => x.Date >= dateFrom.Value);
+			}
+
+			if (dateTo.HasValue)
+			{
+				query = query.Where(x => x.Date <= dateTo.Value);
+			}
+
+			if (timeFrom.HasValue)
+			{
+				query = query.Where(x => x.StartTime >= timeFrom.Value);
+			}
+
+			if (timeTo.HasValue)
+			{
+				query = query.Where(x => x.EndTime <= timeTo.Value);
+			}
+
+			var requirements = await query
+				.OrderBy(x => x.Date)
+				.ThenBy(x => x.StartTime)
 				.Select(x => new StaffingRequirementOutput
 				{
 					Id = x.Id,

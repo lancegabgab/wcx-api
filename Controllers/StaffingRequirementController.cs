@@ -18,9 +18,14 @@ namespace wcx_api.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<Response<List<StaffingRequirementOutput>>>> GetAll()
+		public async Task<ActionResult<Response<List<StaffingRequirementOutput>>>> GetAll(
+		[FromQuery] DateOnly? dateFrom,
+		[FromQuery] DateOnly? dateTo,
+		[FromQuery] TimeSpan? timeFrom,
+		[FromQuery] TimeSpan? timeTo
+		)
 		{
-			var result = await _service.GetAllAsync();
+			var result = await _service.GetAllAsync(dateFrom, dateTo, timeFrom, timeTo);
 
 			return Ok(result);
 		}
