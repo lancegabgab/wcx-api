@@ -18,10 +18,14 @@ namespace wcx_api.Controllers
 
 		// GET: api/Schedule
 		[HttpGet]
-		public async Task<IActionResult> GetAll()
+		public async Task<IActionResult> GetAll(
+		[FromQuery] string? agentId,
+		[FromQuery] DateOnly? dateFrom,
+		[FromQuery] DateOnly? dateTo,
+		[FromQuery] TimeSpan? timeFrom,
+		[FromQuery] TimeSpan? timeTo)
 		{
-			var result = await _scheduleService.GetAllAsync();
-
+			var result = await _scheduleService.GetAllAsync(agentId, dateFrom, dateTo, timeFrom, timeTo);
 			return Ok(result);
 		}
 

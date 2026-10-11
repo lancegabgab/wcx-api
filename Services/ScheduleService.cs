@@ -17,10 +17,44 @@ namespace wcx_api.Services
 			_context = context;
 		}
 
-		public async Task<Response<List<ScheduleOutput>>> GetAllAsync()
+		public async Task<Response<List<ScheduleOutput>>> GetAllAsync(
+		string? agentId,
+		DateOnly? dateFrom,
+		DateOnly? dateTo,
+		TimeSpan? timeFrom,
+		TimeSpan? timeTo
+		)
 		{
-			var schedules = await _context.Schedules
+			var query = _context.Schedules
 				.AsNoTracking()
+				.AsQueryable();
+
+			if (!string.IsNullOrWhiteSpace(agentId))
+			{
+				query = query.Where(s => s.AgentId == agentId);
+			}
+
+			if (dateFrom.HasValue)
+			{
+				query = query.Where(s => s.Date >= dateFrom.Value);
+			}
+
+			if (dateTo.HasValue)
+			{
+				query = query.Where(s => s.Date <= dateTo.Value);
+			}
+
+			if (timeFrom.HasValue)
+			{
+				query = query.Where(s => s.StartTime >= timeFrom.Value);
+			}
+
+			if (timeTo.HasValue)
+			{
+				query = query.Where(s => s.EndTime <= timeTo.Value);
+			}
+
+			var schedules = await query
 				.OrderBy(s => s.Date)
 				.ThenBy(s => s.StartTime)
 				.Select(s => new ScheduleOutput
@@ -105,7 +139,7 @@ namespace wcx_api.Services
 			var schedule = new Schedule
 			{
 				AgentId = input.AgentId,
-				Date = input.Date.Date,
+				Date = input.Date,
 				StartTime = input.StartTime,
 				EndTime = input.EndTime,
 				Status = string.IsNullOrWhiteSpace(input.Status)
@@ -175,7 +209,7 @@ namespace wcx_api.Services
 			}
 
 			schedule.AgentId = input.AgentId;
-			schedule.Date = input.Date.Date;
+			schedule.Date = input.Date;
 			schedule.StartTime = input.StartTime;
 			schedule.EndTime = input.EndTime;
 			schedule.Status = string.IsNullOrWhiteSpace(input.Status)
