@@ -56,7 +56,16 @@ namespace wcx_api.Services
 					Date = x.Date,
 					StartTime = x.StartTime,
 					EndTime = x.EndTime,
-					RequiredAgents = x.RequiredAgents
+					RequiredAgents = x.RequiredAgents,
+					ScheduledAgents = _context.Schedules
+                        .Where(s =>
+							s.Date == x.Date &&
+							s.StartTime < x.EndTime &&
+							s.EndTime > x.StartTime
+						)
+						.Select(s => s.AgentId)
+						.Distinct()
+						.Count()
 				})
 				.ToListAsync();
 
@@ -84,11 +93,29 @@ namespace wcx_api.Services
 				};
 			}
 
+			var scheduledAgents = await _context.Schedules
+				.Where(s =>
+					s.Date == requirement.Date &&
+					s.StartTime < requirement.EndTime &&
+					s.EndTime > requirement.StartTime
+				)
+				.Select(s => s.AgentId)
+				.Distinct()
+				.CountAsync();
+
 			return new Response<StaffingRequirementOutput>
 			{
 				Success = true,
 				Message = "Staffing requirement retrieved successfully.",
-				Data = MapToOutput(requirement)
+				Data = new StaffingRequirementOutput
+				{
+					Id = requirement.Id,
+					Date = requirement.Date,
+					StartTime = requirement.StartTime,
+					EndTime = requirement.EndTime,
+					RequiredAgents = requirement.RequiredAgents,
+					ScheduledAgents = scheduledAgents
+				}
 			};
 		}
 
