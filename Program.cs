@@ -42,11 +42,11 @@ builder.Services
 		};
 	});
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IStaffingRequirementService, StaffingRequirementService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<StaffingRequirementService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ScheduleService>();
 
 builder.Services.AddCors(options =>
 {

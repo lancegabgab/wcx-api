@@ -4,7 +4,7 @@ using wcx_api.Models;
 
 namespace wcx_api.Services
 {
-	public class UserService : IUserService
+	public class UserService
 	{
 		private readonly UserManager<User> _userManager;
 

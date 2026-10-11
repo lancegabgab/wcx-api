@@ -1,114 +1,83 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using wcx_api.DTOs.Inputs;
+using wcx_api.DTOs.Outputs;
 using wcx_api.Services;
 
 namespace wcx_api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	[Authorize(Roles = "Admin")]
 	public class StaffingRequirementController : ControllerBase
 	{
-		private readonly IStaffingRequirementService _service;
+		private readonly StaffingRequirementService _service;
 
 		public StaffingRequirementController(
-			IStaffingRequirementService service)
+			StaffingRequirementService service)
 		{
 			_service = service;
 		}
 
-		// GET: api/StaffingRequirement
 		[HttpGet]
-		public async Task<IActionResult> GetAll()
+		public async Task<ActionResult<Response<List<StaffingRequirementOutput>>>> GetAll()
 		{
 			var result = await _service.GetAllAsync();
 
 			return Ok(result);
 		}
 
-		// GET: api/StaffingRequirement/{id}
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetById(int id)
+		[HttpGet("{id:int}")]
+		public async Task<ActionResult<Response<StaffingRequirementOutput>>> GetById(int id)
 		{
 			var result = await _service.GetByIdAsync(id);
 
-			if (result == null)
+			if (!result.Success)
+				return NotFound(result);
+
+			return Ok(result);
+		}
+
+		[HttpPost]
+		public async Task<ActionResult<Response<StaffingRequirementOutput>>> Create(
+			[FromBody] StaffingRequirementInput input)
+		{
+			var result = await _service.CreateAsync(input);
+
+			if (!result.Success)
+				return BadRequest(result);
+
+			return CreatedAtAction(
+				nameof(GetById),
+				new { id = result.Data!.Id },
+				result);
+		}
+
+		[HttpPut("{id:int}")]
+		public async Task<ActionResult<Response<StaffingRequirementOutput>>> Update(
+			int id,
+			[FromBody] StaffingRequirementInput input)
+		{
+			var result = await _service.UpdateAsync(id, input);
+
+			if (!result.Success)
 			{
-				return NotFound();
+				if (result.Message == "Staffing requirement not found.")
+					return NotFound(result);
+
+				return BadRequest(result);
 			}
 
 			return Ok(result);
 		}
 
-		// POST: api/StaffingRequirement
-		[HttpPost]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Create(
-			StaffingRequirementInput dto)
+		[HttpDelete("{id:int}")]
+		public async Task<ActionResult<Response<bool>>> Delete(int id)
 		{
-			if (dto.StartTime >= dto.EndTime)
-			{
-				return BadRequest(
-					"Start time must be before end time.");
-			}
+			var result = await _service.DeleteAsync(id);
 
-			if (dto.RequiredAgents < 0)
-			{
-				return BadRequest(
-					"Required agents cannot be negative.");
-			}
+			if (!result.Success)
+				return NotFound(result);
 
-			var result = await _service.CreateAsync(dto);
-
-			return CreatedAtAction(
-				nameof(GetById),
-				new { id = result.Id },
-				result);
-		}
-
-		// PUT: api/StaffingRequirement/{id}
-		[HttpPut("{id}")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Update(
-			int id,
-			StaffingRequirementInput dto)
-		{
-			if (dto.StartTime >= dto.EndTime)
-			{
-				return BadRequest(
-					"Start time must be before end time.");
-			}
-
-			if (dto.RequiredAgents < 0)
-			{
-				return BadRequest(
-					"Required agents cannot be negative.");
-			}
-
-			var updated = await _service.UpdateAsync(id, dto);
-
-			if (!updated)
-			{
-				return NotFound();
-			}
-
-			return NoContent();
-		}
-
-		// DELETE: api/StaffingRequirement/{id}
-		[HttpDelete("{id}")]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Delete(int id)
-		{
-			var deleted = await _service.DeleteAsync(id);
-
-			if (!deleted)
-			{
-				return NotFound();
-			}
-
-			return NoContent();
+			return Ok(result);
 		}
 	}
 }

@@ -8,7 +8,7 @@ using wcx_api.Services;
 
 namespace wcx_api.Services
 {
-	public class ScheduleService : IScheduleService
+	public class ScheduleService
 	{
 		private readonly WcxDbContext _context;
 

@@ -10,10 +10,10 @@ namespace wcx_api.Controllers
 	[Authorize]
 	public class AccountController : ControllerBase
 	{
-		private readonly IAccountService _accountService;
+		private readonly AccountService _accountService;
 
 		public AccountController(
-			IAccountService accountService)
+			AccountService accountService)
 		{
 			_accountService = accountService;
 		}

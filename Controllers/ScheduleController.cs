@@ -9,9 +9,9 @@ namespace wcx_api.Controllers
 	[ApiController]
 	public class ScheduleController : ControllerBase
 	{
-		private readonly IScheduleService _scheduleService;
+		private readonly ScheduleService _scheduleService;
 
-		public ScheduleController(IScheduleService scheduleService)
+		public ScheduleController(ScheduleService scheduleService)
 		{
 			_scheduleService = scheduleService;
 		}
