@@ -40,6 +40,80 @@ namespace wcx_api.Seed
 				}
 			}
 
+			var agents = new[]
+{
+	new User
+	{
+		FirstName = "Lorna",
+		MiddleName = "Lorenzo",
+		LastName = "Cruz",
+		UserName = "lorna@gmail.com",
+		Email = "lorna@gmail.com",
+		CreatedAt = DateTime.UtcNow
+	},
+	new User
+	{
+		FirstName = "Jessie",
+		MiddleName = "Autida",
+		LastName = "Cruz",
+		UserName = "jessie@gmail.com",
+		Email = "jessie@gmail.com",
+		CreatedAt = DateTime.UtcNow
+	},
+	new User
+	{
+		FirstName = "Charles",
+		MiddleName = "Lander",
+		LastName = "Cruz",
+		UserName = "charles@gmail.com",
+		Email = "charles@gmail.com",
+		CreatedAt = DateTime.UtcNow
+	}
+};
+
+			foreach (var agent in agents)
+			{
+				var existingAgent = await userManager.FindByEmailAsync(
+					agent.Email!
+				);
+
+				if (existingAgent == null)
+				{
+					var result = await userManager.CreateAsync(
+						agent,
+						"Agent@12345"
+					);
+
+					if (!result.Succeeded)
+					{
+						throw new Exception(
+							$"Failed to create {agent.Email}: " +
+							string.Join(", ",
+								result.Errors.Select(e => e.Description))
+						);
+					}
+
+					existingAgent = agent;
+				}
+
+				if (!await userManager.IsInRoleAsync(existingAgent, "Agent"))
+				{
+					var roleResult = await userManager.AddToRoleAsync(
+						existingAgent,
+						"Agent"
+					);
+
+					if (!roleResult.Succeeded)
+					{
+						throw new Exception(
+							$"Failed to assign Agent role to {existingAgent.Email}: " +
+							string.Join(", ",
+								roleResult.Errors.Select(e => e.Description))
+						);
+					}
+				}
+			}
+
 		}
 	}
 }
