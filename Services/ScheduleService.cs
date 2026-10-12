@@ -335,7 +335,7 @@ namespace wcx_api.Services
 					Date = s.Date,
 					StartTime = s.StartTime,
 					EndTime = s.EndTime,
-					Status = s.Status
+					Status = s.Date < DateOnly.FromDateTime(DateTime.Today) ? "Completed" : s.Status
 				})
 				.ToListAsync();
 
